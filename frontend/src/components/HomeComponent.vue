@@ -14,12 +14,12 @@
             <v-btn
               color="primary"
               dark
-              class="mb-2"
               v-bind="props"
               @click="isNewUser = true"
             >
               New User
             </v-btn>
+            <v-btn color="error" @click="logout">Logout</v-btn>
           </template>
           <v-card
             class="mx-auto pa-12 pb-8"
@@ -154,6 +154,10 @@ export default {
 
   created() {
     this.initialize();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.$router.push('/login');
+    }
   },
 
   methods: {
@@ -211,6 +215,11 @@ export default {
       });
     },
 
+    logout() {
+      localStorage.removeItem('token');
+      this.$router.push('/login');
+    },
+
     save() {
       if (this.isNewUser) {
         axios
@@ -218,6 +227,8 @@ export default {
           .then((response) => {
             console.log("Elemento creado correctamente:", response.data);
             this.close();
+            this.initialize();
+
           })
           .catch((error) => {
             console.error("Error al crear el elemento:", error);
@@ -234,6 +245,8 @@ export default {
           .then((response) => {
             console.log("Elemento actualizado correctamente:", response.data);
             this.close();
+            this.initialize();
+
           })
           .catch((error) => {
             console.error("Error al actualizar el elemento:", error);
