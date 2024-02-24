@@ -11,16 +11,16 @@
       max-width="448"
       rounded="lg"
     >
-      <v-form fast-fail @submit.prevent="signup">
+      <v-form ref="form" lazy-validation @submit.prevent="signup">
         <v-text-field
-          variant="underlined"
           v-model="newUser.username"
           label="Username"
+          :rules="usernameRules"
         ></v-text-field>
         <v-text-field
-          variant="underlined"
           v-model="newUser.email"
           label="Email"
+          :rules="emailRules"
         ></v-text-field>
         <v-text-field
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
@@ -29,6 +29,7 @@
           prepend-inner-icon="mdi-lock-outline"
           @click:append-inner="visible = !visible"
           v-model="newUser.password"
+          :rules="passwordRules"
         ></v-text-field>
         <v-select
           v-model="newUser.role"
@@ -48,8 +49,13 @@
         </p>
       </div>
     </v-card>
+    <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
+      {{ snackbarMessage }}
+      <v-btn color="white" text @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 
@@ -64,21 +70,52 @@ export default {
         role: null,
       },
       visible: false,
-
+      snackbar: false,
+      snackbarMessage: "",
+      snackbarColor: "",
     };
   },
   methods: {
     signup() {
-        console.log(this.newUser)
-      axios
-        .post("http://localhost:8000/api/auth/signup", this.newUser)
-        .then((response) => {
-          console.log(response);
-          this.$router.push("/login");
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      this.$refs.form.validate().then(valid => {
+        if (valid) {
+          axios
+            .post("http://localhost:8000/api/auth/signup", this.newUser)
+            .then((response) => {
+              console.log(response);
+              this.$router.push("/login");
+            })
+            .catch((error) => {
+              if (error.response.status === 400) {
+                this.snackbarMessage = "Username or email already exists";
+                this.snackbarColor = "error";
+                this.snackbar = true;
+              }
+              console.log(error);
+            });
+        }
+      });
+    },
+  },
+  computed: {
+    usernameRules() {
+      return [
+        v => !!v || "Username is required",
+        v => (v && v.length >= 6) || "Username must be at least 6 characters",
+      ];
+    },
+    emailRules() {
+      return [
+        v => !!v || "E-mail is required",
+        v => /.+@.+\..+/.test(v) || "E-mail must be valid",
+      ];
+    },
+    passwordRules() {
+      return [
+        v => !!v || "Password is required",
+        v => (v && v.length >= 6) || "Password must be at least 6 characters",
+        v => /^(?=.*[a-zA-Z])(?=.*[0-9])/.test(v) || "Password must be alphanumeric",
+      ];
     },
   },
 };

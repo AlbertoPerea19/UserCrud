@@ -56,6 +56,10 @@
         </router-link>
       </v-card-text>
     </v-card>
+    <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
+      {{ snackbarMessage }}
+      <v-btn color="white" text @click="snackbar = false" class="ml-auto">Close</v-btn>
+    </v-snackbar>
   </div>
 </template>
 <script>
@@ -67,6 +71,9 @@ export default {
       email: "",
       password: "",
       visible: false,
+      snackbar: false,
+      snackbarMessage: "",
+      snackbarColor: "",
     };
   },
   methods: {
@@ -78,10 +85,17 @@ export default {
         })
         .then((response) => {
           const token = response.data.token
+          const role = response.data.role
           localStorage.setItem("token", token);
+          localStorage.setItem("role", role);
           this.$router.push("/");
         })
         .catch((error) => {
+          if (error.response.status === 404) {
+                this.snackbarMessage = "User not found";
+                this.snackbarColor = "error";
+                this.snackbar = true;
+              }
           console.log(error);
         });
     },

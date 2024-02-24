@@ -37,33 +37,32 @@ class AuthController extends Controller
         }
 
         public function authenticate(Request $request)
-        {
-            $credentials = $request->only('email', 'password');
-            
-            // Recuperar el usuario de la base de datos
-            $user = User::where('email', $credentials['email'])->first();
-        
-            if (!$user) {
-                return response()->json(['error' => 'Usuario no encontrado'], 404);
-            }
-        
-            // Verificar si el password proporcionado coincide con el almacenado en la base de datos
-            if (!Hash::check($credentials['password'], $user->password)) {
-                return response()->json(['error' => 'Credenciales inválidas'], 401);
-            }
-        
-            try {
-                // Autenticar el usuario y generar el token JWT
-                if (!$token = JWTAuth::fromUser($user)) {
-                    return response()->json(['error' => 'No se pudo generar el token'], 500);
-                }
-            } catch (JWTException $e) {
-                return response()->json(['error' => 'No se pudo crear el token'], 500);
-            }
-        
-            // Devolver el token JWT
-            return response()->json(compact('token'));
+{
+    $credentials = $request->only('email', 'password');
+    
+    $user = User::where('email', $credentials['email'])->first();
+
+    if (!$user) {
+        return response()->json(['error' => 'Usuario no encontrado'], 404);
+    }
+
+    if (!Hash::check($credentials['password'], $user->password)) {
+        return response()->json(['error' => 'Credenciales inválidas'], 401);
+    }
+
+    try {
+        if (!$token = JWTAuth::fromUser($user)) {
+            return response()->json(['error' => 'No se pudo generar el token'], 500);
         }
+    } catch (JWTException $e) {
+        return response()->json(['error' => 'No se pudo crear el token'], 500);
+    }
+
+    $role = $user->role; 
+
+    return response()->json(compact('token', 'role'));
+}
+
         
     public function getAuthenticatedUser()
     {

@@ -12,6 +12,7 @@
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ props }">
             <v-btn
+              v-if="isAdmin"
               color="primary"
               dark
               v-bind="props"
@@ -41,15 +42,17 @@
             <v-text-field
               v-model="editUser.username"
               label="Username"
+              :rules="usernameRules"
             ></v-text-field>
             <v-text-field
+              :rules="passwordRules"
               v-if="isNewUser"
               v-model="editUser.password"
               label="password"
               :append-inner-icon="'mdi-refresh'"
               @click:append-inner="generatePassword()"
             ></v-text-field>
-            <v-text-field v-model="editUser.email" label="Email"></v-text-field>
+            <v-text-field :rules="emailRules" v-model="editUser.email" label="Email"></v-text-field>
             <v-select
               v-model="editUser.role"
               :items="roles"
@@ -90,15 +93,21 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon size="small" class="me-2" @click="editItem(item)">
+      <v-icon size="small" class="me-2" v-if="isAdmin" @click="editItem(item)">
         mdi-pencil
       </v-icon>
-      <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
+      <v-icon size="small" v-if="isAdmin" @click="deleteItem(item)">
+        mdi-delete
+      </v-icon>
     </template>
     <template v-slot:no-data>
       <v-btn color="primary" @click="initialize"> Reset </v-btn>
     </template>
   </v-data-table>
+  <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
+      {{ snackbarMessage }}
+      <v-btn color="white" text @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
 </template>
 
 <script>
@@ -109,6 +118,9 @@ export default {
     roles: ["Admin", "User"],
     dialog: false,
     dialogDelete: false,
+    snackbar: false,
+    snackbarMessage: "",
+    snackbarColor: "",
     headers: [
       {
         title: "Id",
@@ -120,7 +132,6 @@ export default {
       { title: "Username", key: "username" },
       { title: "Email", key: "email" },
       { title: "Role", key: "role" },
-      { title: "Actions", key: "actions", sortable: false },
     ],
     users: [],
     editedIndex: -1,
@@ -154,10 +165,35 @@ export default {
 
   created() {
     this.initialize();
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      this.$router.push('/login');
+      this.$router.push("/login");
     }
+    this.isAdmin();
+  },
+
+  computed: {
+    usernameRules() {
+      return [
+        v => !!v || "Username is required",
+        v => (v && v.length >= 6) || "Username must be at least 6 characters",
+        v => !this.users.find(u => u.username === v ) || 'Username already exists'
+      ];
+    },
+    emailRules() {
+      return [
+        v => !!v || "E-mail is required",
+        v => /.+@.+\..+/.test(v) || "E-mail must be valid",
+        v => !this.users.find(u => u.email === v) || 'Email already exists'
+      ];
+    },
+    passwordRules() {
+      return [
+        v => !!v || "Password is required",
+        v => (v && v.length >= 6) || "Password must be at least 6 characters",
+        v => /^(?=.*[a-zA-Z])(?=.*[0-9])/.test(v) || "Password must be alphanumeric",
+      ];
+    },
   },
 
   methods: {
@@ -171,6 +207,20 @@ export default {
         .catch((error) => {
           console.error("Error al obtener los datos:", error);
         });
+    },
+
+    isAdmin() {
+      const role = localStorage.getItem("role");
+      if (role === "Admin") {
+        this.isAdmin = true;
+        this.headers.push({
+          title: "Actions",
+          key: "actions",
+          sortable: false,
+        });
+      } else {
+        this.isAdmin = false;
+      }
     },
 
     editItem(item) {
@@ -216,8 +266,8 @@ export default {
     },
 
     logout() {
-      localStorage.removeItem('token');
-      this.$router.push('/login');
+      localStorage.removeItem("token");
+      this.$router.push("/login");
     },
 
     save() {
@@ -228,10 +278,10 @@ export default {
             console.log("Elemento creado correctamente:", response.data);
             this.close();
             this.initialize();
-
           })
           .catch((error) => {
             console.error("Error al crear el elemento:", error);
+            this.verifyBadRequest(error)
           });
       } else {
         if (!this.isNewUser && !this.editUser.password) {
@@ -246,11 +296,19 @@ export default {
             console.log("Elemento actualizado correctamente:", response.data);
             this.close();
             this.initialize();
-
           })
           .catch((error) => {
             console.error("Error al actualizar el elemento:", error);
+            this.verifyBadRequest(error)
           });
+      }
+    },
+
+    verifyBadRequest(error){
+      if (error.response.status === 500) {
+        this.snackbarMessage = "Username or email already exists";
+        this.snackbarColor = "error";
+        this.snackbar = true;
       }
     },
 
