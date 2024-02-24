@@ -90,6 +90,7 @@ TDD principles were integrated into the development process to ensure code quali
 ```
 
 ### MVC Diagram:
+```
 
   +----------------+      +-------------------+      +-----------------+
   |    Controller  |----->|       Model       |<-----|      View       |
@@ -102,7 +103,7 @@ TDD principles were integrated into the development process to ensure code quali
                           +------+-----------+------+
                           |       Frontend/UI       |
                           +------------------------+
-
+```
 
 ## Conclusion
 
