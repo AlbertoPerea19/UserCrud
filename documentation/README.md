@@ -89,6 +89,21 @@ TDD principles were integrated into the development process to ensure code quali
 +------------------+          +------------------+          +------------------+
 ```
 
+### MVC Diagram:
+
+  +----------------+      +-------------------+      +-----------------+
+  |    Controller  |----->|       Model       |<-----|      View       |
+  +----------------+      +-------------------+      +-----------------+
+         |                       |                        |
+         |      +-------------+  |  +----------------+    |
+         +----->|  Middleware |  |  |    Component   |<---+
+                +-------------+  |  +----------------+
+                                 |           |
+                          +------+-----------+------+
+                          |       Frontend/UI       |
+                          +------------------------+
+
+
 ## Conclusion
 
 The User Management System demonstrates a well-structured architecture, adherence to Laravel and Vue.js best practices, and effective implementation of TDD principles. By following industry-standard practices and emphasizing code quality, maintainability, and security, the application meets all functional requirements and ensures a seamless user experience.
