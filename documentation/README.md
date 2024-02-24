@@ -69,18 +69,6 @@ TDD principles were integrated into the development process to ensure code quali
 
 ## Diagrams
 
-graph TB
-    A[Cliente] --> B[API Routes]
-    B --> C[Controllers]
-    C --> D[Models]
-    D --> E[Base de Datos]
-    
-    B --> F[Middleware]
-    
-    F -.-> C
-    
-    C -.-> A
-
 ### Backend Architecture Diagram:
 
 ```
