@@ -1,73 +1,69 @@
 # User Management System
 
-Este es un sistema de gestión de usuarios desarrollado con Laravel en el backend y Vue.js en el frontend.
+This is a user management system developed with Laravel on the backend and Vue.js on the frontend.
 
-## Descripción del Proyecto
+## Project Description
 
-El sistema de gestión de usuarios permite a los administradores crear, editar, eliminar y listar usuarios. También proporciona funcionalidades de inicio de sesión y registro para los usuarios.
+The user management system allows administrators to create, edit, delete, and list users. It also provides login and registration functionalities for users.
 
-## Características Principales
+## Key Features
 
-- **Autenticación:** Los usuarios pueden iniciar sesión utilizando sus credenciales y los administradores pueden gestionar los roles de usuario.
-- **CRUD de Usuarios:** Los administradores pueden realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los usuarios, incluyendo la asignación de roles.
-- **Validación de Datos:** Se realizan validaciones en el frontend y el backend para garantizar la integridad de los datos.
-- **Interfaz de Usuario Intuitiva:** La interfaz de usuario proporciona una experiencia intuitiva para la gestión de usuarios.
+- **Authentication:** Users can log in using their credentials, and administrators can manage user roles.
+- **User CRUD:** Administrators can perform CRUD (Create, Read, Update, Delete) operations on users, including role assignment.
+- **Data Validation:** Frontend and backend validations ensure data integrity.
+- **Intuitive User Interface:** The user interface provides an intuitive experience for managing users.
 
-## Tecnologías Utilizadas
+## Technologies Used
 
 - **Backend:** Laravel PHP Framework
 - **Frontend:** Vue.js Framework
-- **Base de Datos:** MySQL
-- **Enrutamiento:** Vue Router (Frontend) y Laravel Routing (Backend)
-- **Gestión de Estado:** Vuex (Frontend)
-- **Autenticación:** JWT (JSON Web Tokens)
+- **Database:** MySQL
+- **Routing:** Vue Router (Frontend) and Laravel Routing (Backend)
+- **State Management:** Vuex (Frontend)
+- **Authentication:** JWT (JSON Web Tokens)
 
-## Instalación y Uso
+## Installation and Usage
 
-1. Clona este repositorio en tu máquina local.
-2. Instala las dependencias del backend utilizando Composer:
+1. Clone this repository to your local machine.
+2. Install backend dependencies using Composer:
 
    ```bash
    composer install
    ```
 
-3. Copia el archivo `.env.example` y renómbralo como `.env`. Configura tu base de datos y otros ajustes según sea necesario.
-4. Genera una nueva clave de aplicación:
+3. Copy the `.env.example` file and rename it to `.env`. Configure your database and other settings as needed.
+4. Generate a new application key:
 
    ```bash
    php artisan key:generate
    ```
 
-5. Ejecuta las migraciones para crear las tablas de la base de datos:
+5. Run migrations to create the database tables:
 
    ```bash
    php artisan migrate
    ```
 
-6. Instala las dependencias del frontend utilizando npm:
+6. Install frontend dependencies using npm:
 
    ```bash
    npm install
    ```
 
-7. Inicia el servidor de desarrollo:
+7. Start the development server:
 
    ```bash
    npm run dev
    ```
 
-8. Abre tu navegador y visita la dirección proporcionada por el servidor de desarrollo para acceder al sistema de gestión de usuarios.
+8. Open your browser and visit the address provided by the development server to access the user management system.
 
-## Contribución
+## Contribution
 
-Si deseas contribuir a este proyecto, sigue estos pasos:
+If you would like to contribute to this project, follow these steps:
 
-1. Haz un fork del repositorio.
-2. Crea una nueva rama para tu función o corrección de errores (`git checkout -b feature/nueva-funcion`).
-3. Realiza tus cambios y haz commit de ellos (`git commit -am 'Añade una nueva función'`).
-4. Haz push de tu rama al repositorio (`git push origin feature/nueva-funcion`).
-5. Abre un pull request y describe tus cambios detalladamente.
-
-## Licencia
-
-Este proyecto está licenciado bajo la [Licencia MIT](LICENSE).
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix (`git checkout -b feature/new-feature`).
+3. Make your changes and commit them (`git commit -am 'Add a new feature'`).
+4. Push your branch to the repository (`git push origin feature/new-feature`).
+5. Open a pull request and describe your changes in detail.
