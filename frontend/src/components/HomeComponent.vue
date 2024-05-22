@@ -113,6 +113,22 @@
 <script>
 import axios from "axios";
 
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:3000",
+});
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 export default {
   data: () => ({
     roles: ["Admin", "User"],
@@ -198,14 +214,14 @@ export default {
 
   methods: {
     initialize() {
-      axios
-        .get("http://localhost:8000/api/users")
+      axiosInstance
+        .get("/user")
         .then((response) => {
           this.users = response.data;
           console.log(this.users);
         })
         .catch((error) => {
-          console.error("Error al obtener los datos:", error);
+          console.error("Error fetching data:", error);
         });
     },
 
@@ -237,15 +253,15 @@ export default {
     },
 
     deleteItemConfirm() {
-      axios
-        .delete(`http://localhost:8000/api/users/${this.editUser.id}`)
+      axiosInstance
+        .delete(`/user/${this.editUser.id}`)
         .then((response) => {
-          console.log("Elemento eliminado correctamente:", response.data);
+          console.log("Element deleted successfully:", response.data);
           this.users.splice(this.editedIndex, 1);
           this.closeDelete();
         })
         .catch((error) => {
-          console.error("Error al eliminar el elemento:", error);
+          console.error("Error deleting element:", error);
         });
     },
 
@@ -272,34 +288,31 @@ export default {
 
     save() {
       if (this.isNewUser) {
-        axios
-          .post("http://localhost:8000/api/users", this.editUser)
+        axiosInstance
+          .post("/user", this.editUser)
           .then((response) => {
-            console.log("Elemento creado correctamente:", response.data);
+            console.log("Element created successfully:", response.data);
             this.close();
             this.initialize();
           })
           .catch((error) => {
-            console.error("Error al crear el elemento:", error);
-            this.verifyBadRequest(error)
+            console.error("Error creating element:", error);
+            this.verifyBadRequest(error);
           });
       } else {
         if (!this.isNewUser && !this.editUser.password) {
           delete this.editUser.password;
         }
-        axios
-          .put(
-            `http://localhost:8000/api/users/${this.editUser.id}`,
-            this.editUser
-          )
+        axiosInstance
+          .put(`/user/${this.editUser.id}`, this.editUser)
           .then((response) => {
-            console.log("Elemento actualizado correctamente:", response.data);
+            console.log("Element updated successfully:", response.data);
             this.close();
             this.initialize();
           })
           .catch((error) => {
-            console.error("Error al actualizar el elemento:", error);
-            this.verifyBadRequest(error)
+            console.error("Error updating element:", error);
+            this.verifyBadRequest(error);
           });
       }
     },
