@@ -4,11 +4,8 @@
       <v-card class="pa-12 pb-8 rounded-xl" elevation="12" width="500" rounded="lg">
         <div class="text-center mb-4"> <!-- Agregado mb-4 para agregar espacio -->
         
-        <v-text v-if="isSignupPage" class="text-h4 text-center font-weight-bold" style="color: #142862">
-          Join us!
-        </v-text>
-        <v-text v-if="isLoginPage" class="text-h4 text-center font-weight-bold" style="color: #142862">
-          Welcome back!
+        <v-text v-if="pageTitle" class="text-h4 text-center font-weight-bold" :style="{ color: '#142862' }">
+          {{ pageTitle }}
         </v-text>
 
         <!-- Aquí puedes poner otros elementos de tu página -->
@@ -53,11 +50,16 @@
 import axios from "axios";
 
 export default {
+  props: {
+    pageTitle: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       isSignupPage: window.location.pathname === '/signup',
       isLoginPage: window.location.pathname === '/login',
-      pageTitle: "",
       roles: ["Admin", "Developer", "Marketing"],
       newUser: {
         first_name: "",

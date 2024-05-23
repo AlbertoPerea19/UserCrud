@@ -6,7 +6,7 @@
     </div>
     <div class="mx-auto">
       
-        <SignUpForm></SignUpForm>
+        <SignUpForm :pageTitle="'Welcome Back'"></SignUpForm>
     
       <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
         {{ snackbarMessage }}
