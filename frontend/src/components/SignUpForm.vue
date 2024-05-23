@@ -4,14 +4,11 @@
       <v-card class="pa-12 pb-8 rounded-xl" elevation="12" width="500" rounded="lg">
         <div class="text-center mb-4"> <!-- Agregado mb-4 para agregar espacio -->
         
-        <v-text v-if="pageTitle === 'Signup'" class="text-h4 text-center font-weight-bold" style="color: #142862">
+        <v-text v-if="isSignupPage" class="text-h4 text-center font-weight-bold" style="color: #142862">
           Join us!
         </v-text>
-        <v-text v-else-if="pageTitle === 'Login'" class="text-h4 text-center font-weight-bold" style="color: #142862">
+        <v-text v-if="isLoginPage" class="text-h4 text-center font-weight-bold" style="color: #142862">
           Welcome back!
-        </v-text>
-        <v-text v-else class="text-h4 text-center font-weight-bold" style="color: #142862">
-          Welcome to our site!
         </v-text>
 
         <!-- Aquí puedes poner otros elementos de tu página -->
@@ -34,11 +31,11 @@
         </v-form>
 
         <div class="mt-2">
-          <p v-if="pageTitle === 'Signup'" class="text-body-2">
+          <p v-if="isSignupPage" class="text-body-2">
             Already have an account?
             <router-link to="/login" class="text-blue text-decoration-none">Log in</router-link>
           </p>
-          <p v-else-if="pageTitle === 'Login'" class="text-body-2">
+          <p v-if="isLoginPage" class="text-body-2">
             Don't have an account?
             <router-link to="/signup" class="text-blue text-decoration-none">Sign up</router-link>
           </p>
@@ -59,6 +56,7 @@ export default {
   data() {
     return {
       isSignupPage: window.location.pathname === '/signup',
+      isLoginPage: window.location.pathname === '/login',
       pageTitle: "",
       roles: ["Admin", "Developer", "Marketing"],
       newUser: {
