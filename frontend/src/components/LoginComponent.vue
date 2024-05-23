@@ -50,30 +50,26 @@ export default {
   },
   methods: {
     login() {
-      this.$refs.form.validate().then(valid => {
-        if (valid) {
-          axios
-            .post("http://localhost:3000/auth/login", {
-              email: this.email,
-              password: this.password,
-            })
-            .then((response) => {
-              const token = response.data.token;
-              const role = response.data.role;
-              localStorage.setItem("token", token);
-              localStorage.setItem("role", role);
-              this.$router.push("/");
-            })
-            .catch((error) => {
-              if (error.response.status === 404) {
+      axios
+        .post(`${process.env.VUE_APP_API_URL}/auth/login `, {
+          email: this.email,
+          password: this.password,
+        })
+        .then((response) => {
+          const token = response.data.token
+          const role = response.data.role
+          localStorage.setItem("token", token);
+          localStorage.setItem("role", role);
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          if (error.response.status === 404) {
                 this.snackbarMessage = "User not found";
                 this.snackbarColor = "error";
                 this.snackbar = true;
               }
               console.log(error);
             });
-        }
-      });
     },
   },
   computed: {
