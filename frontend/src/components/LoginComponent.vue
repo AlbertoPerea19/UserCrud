@@ -79,7 +79,7 @@ export default {
   methods: {
     login() {
       axios
-        .post(`${process.env.VUE_APP_ROOT_API}/auth/login `, {
+        .post(`${process.env.VUE_APP_API_URL}/auth/login `, {
           email: this.email,
           password: this.password,
         })
