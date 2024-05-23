@@ -7,16 +7,72 @@
     </div>
     
     <SignUpForm></SignUpForm>
+    
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import SignUpForm from "./SignUpForm.vue";
 
 export default {
-  components: {
-    SignUpForm
-  }
+  data() {
+    return {
+      roles: ["Admin", "User"],
+      newUser: {
+        first_name: "",
+        last_name: "",
+        email: "",
+        password: "",
+        role: null,
+      },
+      visible: false,
+      snackbar: false,
+      snackbarMessage: "",
+      snackbarColor: "",
+    };
+  },
+  methods: {
+    signup() {
+      this.$refs.form.validate().then(valid => {
+        if (valid) {
+          axios
+            .post("http://localhost:3000/auth/register", this.newUser)
+            .then((response) => {
+              console.log(response);
+              this.$router.push("/login");
+            })
+            .catch((error) => {
+              if (error.response.status === 400) {
+                this.snackbarMessage = "Username or email already exists";
+                this.snackbarColor = "error";
+                this.snackbar = true;
+              }
+              console.log(error);
+            });
+        }
+      });
+    },
+  },
+  computed: {
+    usernameRules() {
+      return [
+        v => !!v || "Username is required",
+        v => (v && v.length >= 3) || "Username must be at least 6 characters",
+      ];
+    },
+    emailRules() {
+      return [
+        v => !!v || "E-mail is required",
+        v => /.+@.+\..+/.test(v) || "E-mail must be valid",
+      ];
+    },
+    passwordRules() {
+      return [
+        v => !!v || "Password is required",
+        v => (v && v.length >= 6) || "Password must be at least 6 characters",
+        v => /^(?=.*[a-zA-Z])(?=.*[0-9])/.test(v) || "Password must be alphanumeric",
+      ];
+    },
+  },
 };
 </script>
