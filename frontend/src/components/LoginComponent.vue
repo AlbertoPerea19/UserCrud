@@ -6,7 +6,11 @@
     </div>
     <div class="mx-auto">
       
-        <SignUpForm :pageTitle="'Welcome Back'"></SignUpForm>
+        <SignUpForm 
+        :pageTitle="'Welcome Back'"
+        :formTitle="'Log In'"
+        @formSubmitted="handleLogin"
+        ></SignUpForm>
     
       <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
         {{ snackbarMessage }}
@@ -22,21 +26,15 @@ import axios from "axios";
 export default {
   data() {
     return {
-      email: "",
-      password: "",
-      visible: false,
       snackbar: false,
       snackbarMessage: "",
       snackbarColor: "",
     };
   },
   methods: {
-    login() {
+    handleLogin(formData) {
       axios
-        .post(`${process.env.VUE_APP_API_URL}/auth/login `, {
-          email: this.email,
-          password: this.password,
-        })
+        .post(`${process.env.VUE_APP_API_URL}/auth/login `, formData)
         .then((response) => {
           const token = response.data.token
           const role = response.data.role
