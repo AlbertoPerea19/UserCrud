@@ -1,58 +1,39 @@
 <template>
-    <div>
-      <v-card
-        class="mx-auto pa-12 pb-8"
-        elevation="8"
-        max-width="448"
-        rounded="lg"
-      >
+    <!-- Tarjeta a la derecha, centrada -->
+    <div class="mx-auto">
+      <v-card class="pa-12 pb-8 rounded-xl" elevation="12" width="500" rounded="lg">
+        <div class="text-center mb-4"> <!-- Agregado mb-4 para agregar espacio -->
+          <v-text class="text-h4 text-center font-weight-bold" style="color: #142862">Join us!</v-text>
+        </div>
         <v-form ref="form" lazy-validation @submit.prevent="signup">
-          <v-text-field
-            v-model="newUser.first_name"
-            label="First Name"
-          ></v-text-field>
-          <v-text-field
-            v-model="newUser.last_name"
-            label="Last Name"
-          ></v-text-field>
-          <v-text-field
-            v-model="newUser.email"
-            label="Email"
-            :rules="emailRules"
-          ></v-text-field>
-          <v-text-field
-            :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-            :type="visible ? 'text' : 'password'"
-            label="Password"
-            prepend-inner-icon="mdi-lock-outline"
-            @click:append-inner="visible = !visible"
-            v-model="newUser.password"
-            :rules="passwordRules"
-          ></v-text-field>
-          <v-select
-            v-model="newUser.role"
-            :items="roles"
-            label="Select Role"
-            outlined
-          ></v-select>
-  
-          <v-btn type="submit" color="primary" block class="mt-2">Sign up</v-btn>
+          <v-text-field v-model="newUser.first_name" label="First Name" outlined dense :rules="usernameRules"
+            class="mb-2"></v-text-field>
+          <v-text-field v-model="newUser.last_name" label="Last Name" outlined dense :rules="usernameRules"
+            class="mb-2"></v-text-field>
+          <v-text-field v-model="newUser.email" label="Email" outlined dense :rules="emailRules"
+            class="mb-2"></v-text-field>
+          <v-text-field v-model="newUser.password" label="Password" outlined dense
+            :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" :type="visible ? 'text' : 'password'"
+            prepend-inner-icon="mdi-lock-outline" @click:append-inner="visible = !visible" :rules="passwordRules"
+            class="mb-2"></v-text-field>
+          <v-select v-model="newUser.role" :items="roles" label="Select Role" outlined dense class="mb-2"></v-select>
+          <v-btn type="submit" color="#142862" block>Sign up</v-btn>
         </v-form>
+
         <div class="mt-2">
           <p class="text-body-2">
             Already have an account?
-            <router-link to="/login" class="text-blue text-decoration-none"
-              >Sign in</router-link
-            >
+            <router-link to="/login" class="text-blue text-decoration-none">Sign in</router-link>
           </p>
         </div>
       </v-card>
+
       <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
         {{ snackbarMessage }}
         <v-btn color="white" text @click="snackbar = false">Close</v-btn>
       </v-snackbar>
     </div>
-  </template>
+</template>
 
 <script>
 import axios from "axios";
@@ -79,7 +60,7 @@ export default {
       this.$refs.form.validate().then(valid => {
         if (valid) {
           axios
-            .post("http://localhost:3000/auth/register", this.newUser)
+            .post(`${process.env.VUE_APP_API_URL}/auth/register`, this.newUser)
             .then((response) => {
               console.log(response);
               this.$router.push("/login");
