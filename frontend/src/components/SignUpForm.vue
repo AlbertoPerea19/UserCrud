@@ -79,7 +79,7 @@ export default {
       this.$refs.form.validate().then(valid => {
         if (valid) {
           axios
-            .post("http://localhost:3000/auth/register", this.newUser)
+            .post(`${process.env.VUE_APP_API_URL}/auth/register`, this.newUser)
             .then((response) => {
               console.log(response);
               this.$router.push("/login");
