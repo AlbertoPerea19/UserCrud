@@ -13,9 +13,9 @@
 
         
         <v-form ref="form" lazy-validation @submit.prevent="signup">
-          <v-text-field v-if="isSignupPage" v-model="newUser.first_name" label="First Name" outlined dense :rules="usernameRules"
+          <v-text-field v-if="SignUp" v-model="newUser.first_name" label="First Name" outlined dense :rules="usernameRules"
             class="mb-2"></v-text-field>
-          <v-text-field v-if="isSignupPage" v-model="newUser.last_name" label="Last Name" outlined dense :rules="usernameRules"
+          <v-text-field v-if="SignUp" v-model="newUser.last_name" label="Last Name" outlined dense :rules="usernameRules"
             class="mb-2"></v-text-field>
           <v-text-field v-model="newUser.email" label="Email" outlined dense :rules="emailRules"
             class="mb-2"></v-text-field>
@@ -28,11 +28,11 @@
         </v-form>
 
         <div class="mt-2">
-          <p v-if="isSignupPage" class="text-body-2">
+          <p v-if="SignUp" class="text-body-2">
             Already have an account?
             <router-link to="/login" class="text-blue text-decoration-none">Log in</router-link>
           </p>
-          <p v-if="isLoginPage" class="text-body-2">
+          <p v-if="LogIn" class="text-body-2">
             Don't have an account?
             <router-link to="/signup" class="text-blue text-decoration-none">Sign up</router-link>
           </p>
@@ -55,6 +55,14 @@ export default {
       type: String,
       required: true,
     },
+    SignUp: {
+      type: Boolean,
+      required: true,
+    },
+    LogIn: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
@@ -75,18 +83,6 @@ export default {
     };
   },
   methods: {
-
-    created() {
-    // Obtiene la parte de la ruta de la URL actual
-    const path = window.location.pathname;
-    if (path.includes('signup')) {
-      this.pageTitle = 'Signup';
-    } else if (path.includes('login')) {
-      this.pageTitle = 'Login';
-    } else {
-      this.pageTitle = 'Home';
-    }
-  },
 
     signup() {
       this.$refs.form.validate().then(valid => {
