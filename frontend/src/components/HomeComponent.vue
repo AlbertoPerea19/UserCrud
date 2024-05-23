@@ -11,81 +11,24 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ props }">
-            <v-btn
-              v-if="isAdmin"
-              color="primary"
-              dark
-              v-bind="props"
-              @click="isNewUser = true"
-            >
-              New User
-            </v-btn>
+            <v-btn v-if="isAdmin" color="primary" dark v-bind="props" @click="newUser">New User</v-btn>
             <v-btn color="error" @click="logout">Logout</v-btn>
           </template>
-          <v-card
-            class="mx-auto pa-12 pb-8"
-            elevation="8"
-            max-width="448"
-            rounded="lg"
-            cols="12"
-          >
-            <div class="text-subtitle-1 text-lg-emphasis pa-2">User</div>
-
-            <v-text-field
-              v-model="editUser.first_name"
-              label="First name"
-            ></v-text-field>
-            <v-text-field
-              v-model="editUser.last_name"
-              label="Last name"
-            ></v-text-field>
-            <v-text-field
-              v-model="editUser.username"
-              label="Username"
-              :rules="usernameRules"
-            ></v-text-field>
-            <v-text-field
-              :rules="passwordRules"
-              v-if="isNewUser"
-              v-model="editUser.password"
-              label="password"
-              :append-inner-icon="'mdi-refresh'"
-              @click:append-inner="generatePassword()"
-            ></v-text-field>
-            <v-text-field :rules="emailRules" v-model="editUser.email" label="Email"></v-text-field>
-            <v-select
-              v-model="editUser.role"
-              :items="roles"
-              label="Select Role"
-              outlined
-            ></v-select>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="close">
-                Cancel
-              </v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="save">
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+          <user-form
+            :user="editUser"
+            :roles="roles"
+            :isNewUser="isNewUser"
+            @save="saveUser"
+            @cancel="close"
+          />
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="text-h5"
-              >Are you sure you want to delete this item?</v-card-title
-            >
+            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete"
-                >Cancel</v-btn
-              >
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="deleteItemConfirm"
-                >OK</v-btn
-              >
+              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -93,28 +36,25 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon size="small" class="me-2" v-if="isAdmin" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
-      <v-icon size="small" v-if="isAdmin" @click="deleteItem(item)">
-        mdi-delete
-      </v-icon>
+      <v-icon size="small" class="me-2" v-if="isAdmin" @click="editItem(item)">mdi-pencil</v-icon>
+      <v-icon size="small" v-if="isAdmin" @click="deleteItem(item)">mdi-delete</v-icon>
     </template>
     <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> Reset </v-btn>
+      <v-btn color="primary" @click="initialize">Reset</v-btn>
     </template>
   </v-data-table>
   <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
-      {{ snackbarMessage }}
-      <v-btn color="white" text @click="snackbar = false">Close</v-btn>
-    </v-snackbar>
+    {{ snackbarMessage }}
+    <v-btn color="white" text @click="snackbar = false">Close</v-btn>
+  </v-snackbar>
 </template>
 
 <script>
 import axios from "axios";
+import UserForm from './UserForm.vue';
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: `${process.env.VUE_APP_API_URL}`,
 });
 
 axiosInstance.interceptors.request.use(
@@ -129,9 +69,13 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
 export default {
+  components: {
+    UserForm,
+  },
   data: () => ({
-    roles: ["Admin", "User"],
+    roles: ["Admin", "Developer", "Marketing"],
     dialog: false,
     dialogDelete: false,
     snackbar: false,
@@ -145,7 +89,6 @@ export default {
       },
       { title: "First name", key: "first_name" },
       { title: "Last name", key: "last_name" },
-      { title: "Username", key: "username" },
       { title: "Email", key: "email" },
       { title: "Role", key: "role" },
     ],
@@ -155,7 +98,6 @@ export default {
       id: 0,
       first_name: "",
       last_name: "",
-      username: "",
       email: "",
       role: "",
       password: "",
@@ -164,10 +106,10 @@ export default {
       id: 0,
       first_name: "",
       last_name: "",
-      username: "",
       email: "",
       role: "",
     },
+    isNewUser: false,
   }),
 
   watch: {
@@ -185,31 +127,7 @@ export default {
     if (!token) {
       this.$router.push("/login");
     }
-    this.isAdmin();
-  },
-
-  computed: {
-    usernameRules() {
-      return [
-        v => !!v || "Username is required",
-        v => (v && v.length >= 6) || "Username must be at least 6 characters",
-        v => !this.users.find(u => u.username === v ) || 'Username already exists'
-      ];
-    },
-    emailRules() {
-      return [
-        v => !!v || "E-mail is required",
-        v => /.+@.+\..+/.test(v) || "E-mail must be valid",
-        v => !this.users.find(u => u.email === v) || 'Email already exists'
-      ];
-    },
-    passwordRules() {
-      return [
-        v => !!v || "Password is required",
-        v => (v && v.length >= 6) || "Password must be at least 6 characters",
-        v => /^(?=.*[a-zA-Z])(?=.*[0-9])/.test(v) || "Password must be alphanumeric",
-      ];
-    },
+    this.checkAdmin();
   },
 
   methods: {
@@ -218,14 +136,13 @@ export default {
         .get("/user")
         .then((response) => {
           this.users = response.data;
-          console.log(this.users);
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
     },
 
-    isAdmin() {
+    checkAdmin() {
       const role = localStorage.getItem("role");
       if (role === "Admin") {
         this.isAdmin = true;
@@ -246,6 +163,12 @@ export default {
       this.isNewUser = false;
     },
 
+    newUser() {
+      this.editUser = Object.assign({}, this.defaultItem);
+      this.dialog = true;
+      this.isNewUser = true;
+    },
+
     deleteItem(item) {
       this.editedIndex = this.users.indexOf(item);
       this.editUser = Object.assign({}, item);
@@ -256,7 +179,6 @@ export default {
       axiosInstance
         .delete(`/user/${this.editUser.id}`)
         .then((response) => {
-          console.log("Element deleted successfully:", response.data);
           this.users.splice(this.editedIndex, 1);
           this.closeDelete();
         })
@@ -286,29 +208,31 @@ export default {
       this.$router.push("/login");
     },
 
-    save() {
+    saveUser(user) {
+      if (!this.validateUser(user)) {
+        this.snackbarMessage = "Please fill in all fields.";
+        this.snackbarColor = "error";
+        this.snackbar = true;
+        return;
+      }
+
       if (this.isNewUser) {
         axiosInstance
-          .post("/user", this.editUser)
+          .post("/user", user)
           .then((response) => {
-            console.log("Element created successfully:", response.data);
+            this.users.push(response.data);
             this.close();
-            this.initialize();
           })
           .catch((error) => {
             console.error("Error creating element:", error);
             this.verifyBadRequest(error);
           });
       } else {
-        if (!this.isNewUser && !this.editUser.password) {
-          delete this.editUser.password;
-        }
         axiosInstance
-          .put(`/user/${this.editUser.id}`, this.editUser)
+          .put(`/user/${user.id}`, user)
           .then((response) => {
-            console.log("Element updated successfully:", response.data);
+            Object.assign(this.users[this.editedIndex], response.data);
             this.close();
-            this.initialize();
           })
           .catch((error) => {
             console.error("Error updating element:", error);
@@ -317,23 +241,23 @@ export default {
       }
     },
 
-    verifyBadRequest(error){
+    validateUser(user) {
+      return (
+        user.first_name.trim() !== "" &&
+        user.last_name.trim() !== "" &&
+        user.username.trim() !== "" &&
+        user.email.trim() !== "" &&
+        user.role.trim() !== ""
+      );
+    },
+
+
+    verifyBadRequest(error) {
       if (error.response.status === 500) {
         this.snackbarMessage = "Username or email already exists";
         this.snackbarColor = "error";
         this.snackbar = true;
       }
-    },
-
-    generatePassword() {
-      let length = 12,
-        charset =
-          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        retVal = "";
-      for (let i = 0, n = charset.length; i < length; ++i) {
-        retVal += charset.charAt(Math.floor(Math.random() * n));
-      }
-      this.editUser.password = retVal;
     },
   },
 };
