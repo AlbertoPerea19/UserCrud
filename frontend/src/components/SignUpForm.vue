@@ -3,12 +3,22 @@
     <div class="mx-auto">
       <v-card class="pa-12 pb-8 rounded-xl" elevation="12" width="500" rounded="lg">
         <div class="text-center mb-4"> <!-- Agregado mb-4 para agregar espacio -->
-          <v-text class="text-h4 text-center font-weight-bold" style="color: #142862">Join us!</v-text>
-        </div>
+        
+        <v-text v-if="isSignupPage" class="text-h4 text-center font-weight-bold" style="color: #142862">
+          Join us!
+        </v-text>
+        <v-text v-if="isLoginPage" class="text-h4 text-center font-weight-bold" style="color: #142862">
+          Welcome back!
+        </v-text>
+
+        <!-- Aquí puedes poner otros elementos de tu página -->
+      </div>
+
+        
         <v-form ref="form" lazy-validation @submit.prevent="signup">
-          <v-text-field v-model="newUser.first_name" label="First Name" outlined dense :rules="usernameRules"
+          <v-text-field v-if="isSignupPage" v-model="newUser.first_name" label="First Name" outlined dense :rules="usernameRules"
             class="mb-2"></v-text-field>
-          <v-text-field v-model="newUser.last_name" label="Last Name" outlined dense :rules="usernameRules"
+          <v-text-field v-if="isSignupPage" v-model="newUser.last_name" label="Last Name" outlined dense :rules="usernameRules"
             class="mb-2"></v-text-field>
           <v-text-field v-model="newUser.email" label="Email" outlined dense :rules="emailRules"
             class="mb-2"></v-text-field>
@@ -16,14 +26,18 @@
             :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" :type="visible ? 'text' : 'password'"
             prepend-inner-icon="mdi-lock-outline" @click:append-inner="visible = !visible" :rules="passwordRules"
             class="mb-2"></v-text-field>
-          <v-select v-model="newUser.role" :items="roles" label="Select Role" outlined dense class="mb-2"></v-select>
+          <v-select v-if="isSignupPage" v-model="newUser.role" :items="roles" label="Select Role" outlined dense class="mb-2"></v-select>
           <v-btn type="submit" color="#142862" block>Sign up</v-btn>
         </v-form>
 
         <div class="mt-2">
-          <p class="text-body-2">
+          <p v-if="isSignupPage" class="text-body-2">
             Already have an account?
-            <router-link to="/login" class="text-blue text-decoration-none">Sign in</router-link>
+            <router-link to="/login" class="text-blue text-decoration-none">Log in</router-link>
+          </p>
+          <p v-if="isLoginPage" class="text-body-2">
+            Don't have an account?
+            <router-link to="/signup" class="text-blue text-decoration-none">Sign up</router-link>
           </p>
         </div>
       </v-card>
@@ -41,6 +55,9 @@ import axios from "axios";
 export default {
   data() {
     return {
+      isSignupPage: window.location.pathname === '/signup',
+      isLoginPage: window.location.pathname === '/login',
+      pageTitle: "",
       roles: ["Admin", "Developer", "Marketing"],
       newUser: {
         first_name: "",
@@ -56,6 +73,19 @@ export default {
     };
   },
   methods: {
+
+    created() {
+    // Obtiene la parte de la ruta de la URL actual
+    const path = window.location.pathname;
+    if (path.includes('signup')) {
+      this.pageTitle = 'Signup';
+    } else if (path.includes('login')) {
+      this.pageTitle = 'Login';
+    } else {
+      this.pageTitle = 'Home';
+    }
+  },
+
     signup() {
       this.$refs.form.validate().then(valid => {
         if (valid) {
