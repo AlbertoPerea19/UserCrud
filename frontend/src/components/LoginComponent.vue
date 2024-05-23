@@ -5,8 +5,13 @@
       <v-text class="text-h2 text-center text-white font-weight-bold" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">UserSphere</v-text>
     </div>
     <div class="mx-auto">
-      
-        <SignUpForm :pageTitle="'Welcome Back'" :LogIn="true"></SignUpForm>
+
+        <SignUpForm 
+        :pageTitle="'Welcome Back'"
+        :formTitle="'Log In'"
+        :LogIn="true"
+        @formSubmitted="handleLogin"
+        ></SignUpForm>
     
       <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
         {{ snackbarMessage }}
@@ -22,21 +27,15 @@ import axios from "axios";
 export default {
   data() {
     return {
-      email: "",
-      password: "",
-      visible: false,
       snackbar: false,
       snackbarMessage: "",
       snackbarColor: "",
     };
   },
   methods: {
-    login() {
+    handleLogin(formData) {
       axios
-        .post(`${process.env.VUE_APP_API_URL}/auth/login `, {
-          email: this.email,
-          password: this.password,
-        })
+        .post(`${process.env.VUE_APP_API_URL}/auth/login `, formData)
         .then((response) => {
           const token = response.data.token
           const role = response.data.role
