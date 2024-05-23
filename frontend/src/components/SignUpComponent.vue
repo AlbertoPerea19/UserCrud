@@ -1,10 +1,11 @@
 <template>
-  <div>
-    <v-img
-      class="mx-auto my-6"
-      max-width="228"
-      src="https://cdn.vuetifyjs.com/docs/images/logos/vuetify-logo-v3-slim-text-light.svg"
-    ></v-img>
+  <div class="d-flex align-center">
+    <!-- Imagen a la izquierda -->
+    <div style="position: relative; width: 55%; height: 800px;">
+      <v-img src="../assets/cool-background.svg" alt="Imagen de nosotros" cover width="100%" height="100%"></v-img>
+      <v-text class="text-h2 text-center text-white font-weight-bold" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">UserSphere</v-text>
+    </div>
+    
     <SignUpForm></SignUpForm>
   </div>
 </template>
