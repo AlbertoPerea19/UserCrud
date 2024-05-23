@@ -5,10 +5,11 @@
       <v-text class="text-h2 text-center text-white font-weight-bold" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">UserSphere</v-text>
     </div>
     <div class="mx-auto">
-      
+
         <SignUpForm 
         :pageTitle="'Welcome Back'"
         :formTitle="'Log In'"
+        :LogIn="true"
         @formSubmitted="handleLogin"
         ></SignUpForm>
     

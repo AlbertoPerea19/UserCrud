@@ -9,9 +9,10 @@
         </v-text>
         <!-- Aquí puedes poner otros elementos de tu página -->
       </div>
+
       <v-form ref="form" lazy-validation @submit.prevent="handleSubmit">
         <v-text-field
-          v-if="isSignupPage"
+          v-if="SignUp"
           v-model="formData.first_name"
           label="First Name"
           outlined
@@ -20,7 +21,7 @@
           class="mb-2"
         ></v-text-field>
         <v-text-field
-          v-if="isSignupPage"
+          v-if="SignUp"
           v-model="formData.last_name"
           label="Last Name"
           outlined
@@ -49,7 +50,7 @@
           class="mb-2"
         ></v-text-field>
         <v-select
-          v-if="isSignupPage"
+          v-if="SignUp"
           v-model="formData.role"
           :items="roles"
           label="Select Role"
@@ -60,11 +61,11 @@
         <v-btn type="submit" color="#142862" block>{{ formTitle }}</v-btn>
       </v-form>
       <div class="mt-2">
-        <p v-if="isSignupPage" class="text-body-2">
+        <p v-if="SignUp" class="text-body-2">
           Already have an account?
           <router-link to="/login" class="text-blue text-decoration-none">Log in</router-link>
         </p>
-        <p v-if="isLoginPage" class="text-body-2">
+        <p v-if="LogIn" class="text-body-2">
           Don't have an account?
           <router-link to="/signup" class="text-blue text-decoration-none">Sign up</router-link>
         </p>
@@ -84,6 +85,15 @@ export default {
       type: String,
       required: true,
     },
+    
+    SignUp: {
+      type: Boolean,
+      required: true,
+    },
+    LogIn: {
+      type: Boolean,
+      required: true,
+     },
     formTitle: {
       type: String,
       required: true,
@@ -91,8 +101,6 @@ export default {
   },
   data() {
     return {
-      isSignupPage: window.location.pathname === "/signup",
-      isLoginPage: window.location.pathname === "/login",
       roles: ["Admin", "Developer", "Marketing"],
       formData: {
         first_name: "",
@@ -108,6 +116,7 @@ export default {
     };
   },
   methods: {
+
     handleSubmit() {
       this.$refs.form.validate().then((valid) => {
         if (valid) {

@@ -5,10 +5,11 @@
       <v-img src="../assets/cool-background.svg" alt="Imagen de nosotros" cover width="100%" height="100%"></v-img>
       <v-text class="text-h2 text-center text-white font-weight-bold" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">UserSphere</v-text>
     </div>
-    
+
     <SignUpForm 
     :pageTitle="'Join Us'"
     :formTitle="'Sign Up'"
+    :SignUp="true"
     @formSubmitted="handleSignup"
     ></SignUpForm>
     
