@@ -9,7 +9,16 @@
           <v-btn v-if="isAdmin" color="green" dark v-bind="props" @click="newUser" class="font-weight-bold">New User</v-btn>
           <v-btn class="font-weight-bold" color="white" @click="logout">Logout</v-btn>
         </template>
-        <user-form :user="editUser" :roles="roles" :isNewUser="isNewUser" @save="saveUser" @cancel="close" />
+        <EmployeeForm
+          :pageTitle="'Employees'"
+          :Home="true"
+          :formTitle="'Save'"
+          :formTitle2="'Cancel'"
+          :SignUp="true"
+          :editUser="editUser" 
+          @formSubmitted="handleUser"
+          @close="close"
+          />
       </v-dialog>
 
       <v-dialog v-model="dialogDelete" max-width="500px">
@@ -29,8 +38,8 @@
       <v-card class="mx-auto mt-5" style="max-width: 1000px">
         <v-data-table class="deep-blue--bg" :headers="headers" :items="users" :sort-by="[{ key: 'id', order: 'asc' }]" @click:row="goToUserDetails">
           <template v-slot:item.actions="{ item }">
-            <v-icon size="small" class="me-2" v-if="isAdmin" @click="editItem(item)">mdi-pencil</v-icon>
-            <v-icon size="small" v-if="isAdmin" @click="deleteItem(item)">mdi-delete</v-icon>
+            <v-icon size="small" class="me-2" v-if="isAdmin" @click.stop="editItem(item)">mdi-pencil</v-icon>
+            <v-icon size="small" v-if="isAdmin" @click.stop="deleteItem(item)">mdi-delete</v-icon>
           </template>
 
           <template v-slot:no-data>
