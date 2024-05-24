@@ -14,7 +14,7 @@
             <v-btn v-if="isAdmin" color="primary" dark v-bind="props" @click="newUser">New User</v-btn>
             <v-btn color="error" @click="logout">Logout</v-btn>
           </template>
-          <userForm
+          <EmployeeForm
           :pageTitle="'Employees'"
           :Home="true"
           :formTitle="'Save'"
@@ -52,6 +52,7 @@
 
 <script>
 import axios from "axios";
+import EmployeeForm from "./EmployeeForm.vue";
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_URL}`,
@@ -72,8 +73,8 @@ axiosInstance.interceptors.request.use(
 
 export default {
   components: {
-    UserForm,
-  },
+    EmployeeForm
+},
   data: () => ({
     roles: ["Admin", "Developer", "Marketing"],
     dialog: false,

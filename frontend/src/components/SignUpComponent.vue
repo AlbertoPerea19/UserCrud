@@ -6,45 +6,47 @@
       <v-text class="text-h2 text-center text-white font-weight-bold" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">UserSphere</v-text>
     </div>
 
-    <userForm 
+    <EmployeeForm 
     :pageTitle="'Join Us'"
     :formTitle="'Sign Up'"
     :SignUp="true"
     :textSignUp="true"
     @formSubmitted="handleSignup"
-    ></userForm>
+    ></EmployeeForm>
     
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import EmployeeForm from "./EmployeeForm.vue";
 
 export default {
-  data() {
-    return {
-      snackbar: false,
-      snackbarMessage: "",
-      snackbarColor: "",
-    };
-  },
-  methods: {
-    handleSignup(formData) {
-          axios
-            .post("http://localhost:3000/auth/register", formData)
-            .then((response) => {
-              console.log(response);
-              this.$router.push("/login");
+    data() {
+        return {
+            snackbar: false,
+            snackbarMessage: "",
+            snackbarColor: "",
+        };
+    },
+    methods: {
+        handleSignup(formData) {
+            axios
+                .post("http://localhost:3000/auth/register", formData)
+                .then((response) => {
+                console.log(response);
+                this.$router.push("/login");
             })
-            .catch((error) => {
-              if (error.response.status === 400) {
-                this.snackbarMessage = "Username or email already exists";
-                this.snackbarColor = "error";
-                this.snackbar = true;
-              }
-              console.log(error);
+                .catch((error) => {
+                if (error.response.status === 400) {
+                    this.snackbarMessage = "Username or email already exists";
+                    this.snackbarColor = "error";
+                    this.snackbar = true;
+                }
+                console.log(error);
             });
         }
-  },
+    },
+    components: { EmployeeForm }
 };
 </script>
