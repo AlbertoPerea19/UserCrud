@@ -6,12 +6,13 @@
       <v-text class="text-h2 text-center text-white font-weight-bold" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">UserSphere</v-text>
     </div>
 
-    <SignUpForm 
+    <userForm 
     :pageTitle="'Join Us'"
     :formTitle="'Sign Up'"
     :SignUp="true"
+    :textSignUp="true"
     @formSubmitted="handleSignup"
-    ></SignUpForm>
+    ></userForm>
     
   </div>
 </template>

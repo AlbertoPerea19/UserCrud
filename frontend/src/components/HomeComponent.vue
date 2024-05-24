@@ -14,12 +14,13 @@
             <v-btn v-if="isAdmin" color="primary" dark v-bind="props" @click="newUser">New User</v-btn>
             <v-btn color="error" @click="logout">Logout</v-btn>
           </template>
-          <user-form
-            :user="editUser"
-            :roles="roles"
-            :isNewUser="isNewUser"
-            @save="saveUser"
-            @cancel="close"
+          <userForm
+          :pageTitle="'Employees'"
+          :Home="true"
+          :formTitle="'Save'"
+          :formTitle2="'Cancel'"
+          :SignUp="true"
+          @formSubmitted="handleSignup"
           />
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
@@ -51,7 +52,6 @@
 
 <script>
 import axios from "axios";
-import UserForm from './UserForm.vue';
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_URL}`,

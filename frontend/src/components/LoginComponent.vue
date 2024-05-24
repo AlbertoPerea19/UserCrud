@@ -6,12 +6,12 @@
     </div>
     <div class="mx-auto">
 
-        <SignUpForm 
+        <userForm 
         :pageTitle="'Welcome Back'"
         :formTitle="'Log In'"
-        :LogIn="true"
+        :textLogIn="true"
         @formSubmitted="handleLogin"
-        ></SignUpForm>
+        ></userForm>
     
       <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
         {{ snackbarMessage }}
