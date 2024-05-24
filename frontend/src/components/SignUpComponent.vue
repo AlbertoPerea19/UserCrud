@@ -30,7 +30,7 @@ export default {
   methods: {
     handleSignup(formData) {
           axios
-            .post("http://localhost:3000/auth/register", formData)
+            .post(`${process.env.VUE_APP_API_URL}/auth/register `, formData)
             .then((response) => {
               console.log(response);
               this.$router.push("/login");
