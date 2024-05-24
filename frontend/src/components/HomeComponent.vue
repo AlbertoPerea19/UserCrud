@@ -32,13 +32,39 @@
             <v-icon size="small" class="me-2" v-if="isAdmin" @click="editItem(item)">mdi-pencil</v-icon>
             <v-icon size="small" v-if="isAdmin" @click="deleteItem(item)">mdi-delete</v-icon>
           </template>
-          <template v-slot:no-data>
-            <v-btn color="primary" @click="initialize">Reset</v-btn>
-          </template>
-        </v-data-table>
-      </v-card>
-    </div>
-  </div>
+          
+          <EmployeeForm
+          :pageTitle="'Employees'"
+          :Home="true"
+          :formTitle="'Save'"
+          :formTitle2="'Cancel'"
+          :SignUp="true"
+          :editUser="editUser" 
+          @formSubmitted="handleUser"
+          @close="close"
+          />
+        </v-dialog>
+        <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-toolbar>
+    </template>
+    <template v-slot:item.actions="{ item }">
+      <v-icon size="small" class="me-2" v-if="isAdmin" @click="editItem(item)">mdi-pencil</v-icon>
+      <v-icon size="small" v-if="isAdmin" @click="deleteItem(item)">mdi-delete</v-icon>
+    </template>
+    <template v-slot:no-data>
+      <v-btn color="primary" @click="initialize">Reset</v-btn>
+    </template>
+  </v-data-table>
 
   <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
     {{ snackbarMessage }}
@@ -48,7 +74,9 @@
 
 <script>
 import axios from "axios";
-import UserForm from "./UserForm.vue";
+
+import EmployeeForm from "./EmployeeForm.vue";
+
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_URL}`,
@@ -69,8 +97,8 @@ axiosInstance.interceptors.request.use(
 
 export default {
   components: {
-    UserForm,
-  },
+    EmployeeForm
+},
   data: () => ({
     roles: ["Admin", "Developer", "Marketing"],
     dialog: false,
@@ -128,6 +156,22 @@ export default {
   },
 
   methods: {
+    handleUser(formData){
+      axios
+                .post("http://localhost:3000/auth/register", formData)
+                .then((response) => {
+                console.log(response);
+                this.initialize()
+            })
+                .catch((error) => {
+                if (error.response.status === 400) {
+                    this.snackbarMessage = "Username or email already exists";
+                    this.snackbarColor = "error";
+                    this.snackbar = true;
+                }
+                console.log(error);
+            });
+    },
     initialize() {
       axiosInstance
         .get("/user")
