@@ -1,57 +1,65 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="users"
-    :sort-by="[{ key: 'id', order: 'asc' }]"
-  >
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>USER CRUD</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ props }">
-            <v-btn v-if="isAdmin" color="primary" dark v-bind="props" @click="newUser">New User</v-btn>
-            <v-btn color="error" @click="logout">Logout</v-btn>
+  <div>
+    <v-toolbar color="#142862"
+      dark
+      prominent>
+      <v-toolbar-title class="font-weight-bold">EMPLOYEES CRUD</v-toolbar-title>
+      <v-spacer></v-spacer>
+     
+      
+  <v-dialog v-model="dialog" max-width="1200px">
+  <template v-slot:activator="{ props }">
+    <v-btn v-if="isAdmin" color="green" dark v-bind="props" @click="newUser" class="font-weight-bold">New User</v-btn>
+    <v-btn class="font-weight-bold" color="white" @click="logout" >Logout</v-btn>
+  </template>
+  <user-form :user="editUser" :roles="roles" :isNewUser="isNewUser" @save="saveUser" @cancel="close" />
+</v-dialog>
+
+
+      <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+ 
+
+
+    </v-toolbar>
+
+    <div>
+      <v-card class="mx-auto mt-5" style="max-width: 1000px">
+        <v-data-table class="deep-blue--bg" :headers="headers" :items="users" :sort-by="[{ key: 'id', order: 'asc' }]">
+          <template v-slot:item.actions="{ item }">
+            <v-icon size="small" class="me-2" v-if="isAdmin" @click="editItem(item)">mdi-pencil</v-icon>
+            <v-icon size="small" v-if="isAdmin" @click="deleteItem(item)">mdi-delete</v-icon>
           </template>
-          <user-form
-            :user="editUser"
-            :roles="roles"
-            :isNewUser="isNewUser"
-            @save="saveUser"
-            @cancel="close"
-          />
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon size="small" class="me-2" v-if="isAdmin" @click="editItem(item)">mdi-pencil</v-icon>
-      <v-icon size="small" v-if="isAdmin" @click="deleteItem(item)">mdi-delete</v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
-    </template>
-  </v-data-table>
+          <template v-slot:no-data>
+            <v-btn color="primary" @click="initialize">Reset</v-btn>
+          </template>
+        </v-data-table>
+      </v-card>
+    </div>
+  </div>
+
   <v-snackbar v-model="snackbar" :color="snackbarColor" multi-line>
     {{ snackbarMessage }}
     <v-btn color="white" text @click="snackbar = false">Close</v-btn>
   </v-snackbar>
 </template>
 
+
+
+
+
 <script>
 import axios from "axios";
-import UserForm from './UserForm.vue';
+import UserForm from "./UserForm.vue";
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_URL}`,
@@ -251,7 +259,6 @@ export default {
         user.role.trim() !== ""
       );
     },
-
 
     verifyBadRequest(error) {
       if (error.response.status === 500) {
