@@ -140,20 +140,39 @@ export default {
 
   methods: {
     handleUser(formData) {
-      axios
-        .post("http://localhost:3000/auth/register", formData)
-        .then((response) => {
-          console.log(response);
-          this.initialize();
-        })
-        .catch((error) => {
-          if (error.response.status === 400) {
-            this.snackbarMessage = "Username or email already exists";
-            this.snackbarColor = "error";
-            this.snackbar = true;
-          }
-          console.log(error);
-        });
+      if (this.isNewUser) {
+        axiosInstance
+          .post("/user", formData)
+          .then((response) => {
+            console.log(response);
+            this.initialize();
+            this.close();
+          })
+          .catch((error) => {
+            if (error.response.status === 400) {
+              this.snackbarMessage = "Username or email already exists";
+              this.snackbarColor = "error";
+              this.snackbar = true;
+            }
+            console.log(error);
+          });
+      } else {
+        axiosInstance
+          .patch(`/user/${this.editUser.id}`, formData)
+          .then((response) => {
+            Object.assign(this.users[this.editedIndex], response.data);
+            this.initialize();
+            this.close();
+          })
+          .catch((error) => {
+            console.error("Error updating element:", error);
+            if (error.response.status === 500) {
+              this.snackbarMessage = "Username or email already exists";
+              this.snackbarColor = "error";
+              this.snackbar = true;
+            }
+          });
+      }
     },
     initialize() {
       axiosInstance
