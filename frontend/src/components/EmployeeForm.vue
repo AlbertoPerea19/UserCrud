@@ -58,7 +58,7 @@
         ></v-select>
         <v-btn type="submit" color="#142862" block>{{ formTitle }}</v-btn>
         <span> &nbsp;&nbsp</span>
-        <v-btn  v-if="Home" type="submit" color="error" block >{{ formTitle2 }}</v-btn>
+        <v-btn  v-if="Home" color="error" block @click="close()">{{ formTitle2 }}</v-btn>
       </v-form>
       <div class="mt-2">
         <p v-if="textSignUp" class="text-body-2">
@@ -117,6 +117,8 @@ export default {
       type: String,
       required: true,
     },
+    
+    editUser: Object,
   },
   data() {
     return {
@@ -134,7 +136,19 @@ export default {
       snackbarColor: "",
     };
   },
+
+  watch: {
+    editUser: {
+      handler(newUser) {  
+        this.formData = { ...newUser };
+      },
+      immediate: true,
+    },
+  },
   methods: {
+    close() {
+      this.$emit('close');  
+    },
 
     handleSubmit() {
       this.$refs.form.validate().then((valid) => {
