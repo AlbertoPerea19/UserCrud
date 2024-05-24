@@ -205,6 +205,7 @@ export default {
 
     logout() {
       localStorage.removeItem("token");
+      localStorage.removeItem("role");
       this.$router.push("/login");
     },
 
