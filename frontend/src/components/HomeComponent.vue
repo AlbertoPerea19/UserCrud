@@ -3,6 +3,7 @@
     :headers="headers"
     :items="users"
     :sort-by="[{ key: 'id', order: 'asc' }]"
+    @click:row="goToUserDetails"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -260,6 +261,11 @@ export default {
         this.snackbar = true;
       }
     },
+    
+    goToUserDetails(event, row) {
+      this.$router.push(`/user/${row.item.id}`);
+    },
   },
+  
 };
 </script>
