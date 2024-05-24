@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Crud: typeof import('./src/components/crud.vue')['default']
+    EmployeeForm: typeof import('./src/components/EmployeeForm.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Home: typeof import('./src/components/Home.vue')['default']
     HomeComponent: typeof import('./src/components/HomeComponent.vue')['default']
@@ -17,6 +18,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SignUpComponent: typeof import('./src/components/SignUpComponent.vue')['default']
     SignUpForm: typeof import('./src/components/SignUpForm.vue')['default']
+    UserDetails: typeof import('./src/components/UserDetails.vue')['default']
     UserForm: typeof import('./src/components/UserForm.vue')['default']
   }
 }
