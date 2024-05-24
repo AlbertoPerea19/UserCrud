@@ -27,7 +27,7 @@
 
     <div>
       <v-card class="mx-auto mt-5" style="max-width: 1000px">
-        <v-data-table class="deep-blue--bg" :headers="headers" :items="users" :sort-by="[{ key: 'id', order: 'asc' }]">
+        <v-data-table class="deep-blue--bg" :headers="headers" :items="users" :sort-by="[{ key: 'id', order: 'asc' }]" @click:row="goToUserDetails">
           <template v-slot:item.actions="{ item }">
             <v-icon size="small" class="me-2" v-if="isAdmin" @click="editItem(item)">mdi-pencil</v-icon>
             <v-icon size="small" v-if="isAdmin" @click="deleteItem(item)">mdi-delete</v-icon>
@@ -255,6 +255,10 @@ export default {
         this.snackbarColor = "error";
         this.snackbar = true;
       }
+    },
+    
+    goToUserDetails(event, row) {
+      this.$router.push(`/user/${row.item.id}`);
     },
   },
 };
