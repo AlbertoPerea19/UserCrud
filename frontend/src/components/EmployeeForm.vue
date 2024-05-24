@@ -17,7 +17,6 @@
           label="First Name"
           outlined
           dense
-          :rules="usernameRules"
           class="mb-2"
         ></v-text-field>
         <v-text-field
@@ -26,7 +25,6 @@
           label="Last Name"
           outlined
           dense
-          :rules="usernameRules"
           class="mb-2"
         ></v-text-field>
         <v-text-field
@@ -59,13 +57,15 @@
           class="mb-2"
         ></v-select>
         <v-btn type="submit" color="#142862" block>{{ formTitle }}</v-btn>
+        <span> &nbsp;&nbsp</span>
+        <v-btn  v-if="Home" color="error" block @click="close()">{{ formTitle2 }}</v-btn>
       </v-form>
       <div class="mt-2">
-        <p v-if="SignUp" class="text-body-2">
+        <p v-if="textSignUp" class="text-body-2">
           Already have an account?
           <router-link to="/login" class="text-blue text-decoration-none">Log in</router-link>
         </p>
-        <p v-if="LogIn" class="text-body-2">
+        <p v-if="textLogIn" class="text-body-2">
           Don't have an account?
           <router-link to="/signup" class="text-blue text-decoration-none">Sign up</router-link>
         </p>
@@ -81,16 +81,31 @@
 <script>
 export default {
   props: {
+    user: Object,
+    roles: Array,
+    isNewUser: Boolean,
     pageTitle: {
       type: String,
       required: true,
     },
     
     SignUp: {
+      default: false,
       type: Boolean,
       required: true,
     },
-    LogIn: {
+    textSignUp: {
+      default: false,
+      type: Boolean,
+      required: true,
+    },
+
+    textLogIn: {
+      default: false,
+      type: Boolean,
+      required: true,
+     },
+    Home: {
       type: Boolean,
       required: true,
      },
@@ -98,6 +113,12 @@ export default {
       type: String,
       required: true,
     },
+    formTitle2: {
+      type: String,
+      required: true,
+    },
+    
+    editUser: Object,
   },
   data() {
     return {
@@ -115,7 +136,19 @@ export default {
       snackbarColor: "",
     };
   },
+
+  watch: {
+    editUser: {
+      handler(newUser) {  
+        this.formData = { ...newUser };
+      },
+      immediate: true,
+    },
+  },
   methods: {
+    close() {
+      this.$emit('close');  
+    },
 
     handleSubmit() {
       this.$refs.form.validate().then((valid) => {
@@ -139,6 +172,9 @@ export default {
         (v) => (v && v.length >= 6) || "Password must be at least 6 characters",
         (v) => /^(?=.*[a-zA-Z])(?=.*[0-9])/.test(v) || "Password must be alphanumeric",
       ];
+    },
+    save() {
+      this.$emit('save', this.user);
     },
   },
 };

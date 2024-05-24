@@ -15,12 +15,15 @@
             <v-btn v-if="isAdmin" color="primary" dark v-bind="props" @click="newUser">New User</v-btn>
             <v-btn color="error" @click="logout">Logout</v-btn>
           </template>
-          <user-form
-            :user="editUser"
-            :roles="roles"
-            :isNewUser="isNewUser"
-            @save="saveUser"
-            @cancel="close"
+          <EmployeeForm
+          :pageTitle="'Employees'"
+          :Home="true"
+          :formTitle="'Save'"
+          :formTitle2="'Cancel'"
+          :SignUp="true"
+          :editUser="editUser" 
+          @formSubmitted="handleUser"
+          @close="close"
           />
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
@@ -52,7 +55,7 @@
 
 <script>
 import axios from "axios";
-import UserForm from './UserForm.vue';
+import EmployeeForm from "./EmployeeForm.vue";
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_URL}`,
@@ -73,8 +76,8 @@ axiosInstance.interceptors.request.use(
 
 export default {
   components: {
-    UserForm,
-  },
+    EmployeeForm
+},
   data: () => ({
     roles: ["Admin", "Developer", "Marketing"],
     dialog: false,
@@ -132,6 +135,22 @@ export default {
   },
 
   methods: {
+    handleUser(formData){
+      axios
+                .post("http://localhost:3000/auth/register", formData)
+                .then((response) => {
+                console.log(response);
+                this.initialize()
+            })
+                .catch((error) => {
+                if (error.response.status === 400) {
+                    this.snackbarMessage = "Username or email already exists";
+                    this.snackbarColor = "error";
+                    this.snackbar = true;
+                }
+                console.log(error);
+            });
+    },
     initialize() {
       axiosInstance
         .get("/user")
