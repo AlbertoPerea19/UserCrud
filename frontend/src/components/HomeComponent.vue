@@ -3,6 +3,7 @@
     :headers="headers"
     :items="users"
     :sort-by="[{ key: 'id', order: 'asc' }]"
+    @click:row="goToUserDetails"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -224,6 +225,7 @@ export default {
 
     logout() {
       localStorage.removeItem("token");
+      localStorage.removeItem("role");
       this.$router.push("/login");
     },
 
@@ -278,6 +280,11 @@ export default {
         this.snackbar = true;
       }
     },
+    
+    goToUserDetails(event, row) {
+      this.$router.push(`/user/${row.item.id}`);
+    },
   },
+  
 };
 </script>

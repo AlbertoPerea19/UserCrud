@@ -22,20 +22,21 @@ import axios from "axios";
 import EmployeeForm from "./EmployeeForm.vue";
 
 export default {
-    data() {
-        return {
-            snackbar: false,
-            snackbarMessage: "",
-            snackbarColor: "",
-        };
-    },
-    methods: {
-        handleSignup(formData) {
-            axios
-                .post("http://localhost:3000/auth/register", formData)
-                .then((response) => {
-                console.log(response);
-                this.$router.push("/login");
+  data() {
+    return {
+      snackbar: false,
+      snackbarMessage: "",
+      snackbarColor: "",
+    };
+  },
+  methods: {
+    handleSignup(formData) {
+          axios
+            .post(`${process.env.VUE_APP_API_URL}/auth/register `, formData)
+            .then((response) => {
+              console.log(response);
+              this.$router.push("/login");
+
             })
                 .catch((error) => {
                 if (error.response.status === 400) {
