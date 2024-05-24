@@ -1,20 +1,16 @@
 <template>
   <div>
-    <v-toolbar color="#142862"
-      dark
-      prominent>
+    <v-toolbar color="#142862" dark prominent>
       <v-toolbar-title class="font-weight-bold">EMPLOYEES CRUD</v-toolbar-title>
       <v-spacer></v-spacer>
-     
-      
-  <v-dialog v-model="dialog" max-width="1200px">
-  <template v-slot:activator="{ props }">
-    <v-btn v-if="isAdmin" color="green" dark v-bind="props" @click="newUser" class="font-weight-bold">New User</v-btn>
-    <v-btn class="font-weight-bold" color="white" @click="logout" >Logout</v-btn>
-  </template>
-  <user-form :user="editUser" :roles="roles" :isNewUser="isNewUser" @save="saveUser" @cancel="close" />
-</v-dialog>
 
+      <v-dialog v-model="dialog" max-width="1200px">
+        <template v-slot:activator="{ props }">
+          <v-btn v-if="isAdmin" color="green" dark v-bind="props" @click="newUser" class="font-weight-bold">New User</v-btn>
+          <v-btn class="font-weight-bold" color="white" @click="logout">Logout</v-btn>
+        </template>
+        <user-form :user="editUser" :roles="roles" :isNewUser="isNewUser" @save="saveUser" @cancel="close" />
+      </v-dialog>
 
       <v-dialog v-model="dialogDelete" max-width="500px">
         <v-card>
@@ -27,9 +23,6 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
- 
-
-
     </v-toolbar>
 
     <div>
@@ -52,10 +45,6 @@
     <v-btn color="white" text @click="snackbar = false">Close</v-btn>
   </v-snackbar>
 </template>
-
-
-
-
 
 <script>
 import axios from "axios";
